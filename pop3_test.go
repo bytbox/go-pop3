@@ -60,8 +60,16 @@ func TestBasic (t *testing.T) {
 		t.Fatal("User failed: %s", err)
 	}
 
-	if err = c.Pass("password"); err != nil {
-		t.Fatal("Pass failed: %s", err)
+	if err = c.Pass("password1"); err == nil {
+		t.Fatal("Pass succeeded inappropriately")
+	}
+
+	if err = c.Auth("uname", "password2"); err != nil {
+		t.Fatal("Auth failed: %s", err)
+	}
+
+	if err = c.Noop(); err != nil {
+		t.Fatal("Noop failed: %s", err)
 	}
 
 	bcmdbuf.Flush()
@@ -71,10 +79,16 @@ func TestBasic (t *testing.T) {
 }
 
 var basicServer = `+OK good morning
-+OK
++OK send PASS
+-ERR [AUTH] mismatched username and password
++OK send PASS
++OK welcome
 +OK
 `
 
 var basicClient = `USER uname
-PASS password
+PASS password1
+USER uname
+PASS password2
+NOOP
 `
