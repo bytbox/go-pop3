@@ -62,6 +62,7 @@ func NewClient(conn net.Conn) (*Client, error) {
 func (c *Client) Cmd(format string, args ...interface{}) (string, error) {
 	fmt.Fprintf(c.conn, format, args...)
 	line, _, err := c.bin.ReadLine()
+	if err != nil { return "", err }
 	l := string(line)
 	if l[0:3] != "+OK" {
 		err = errors.New(l[5:])
