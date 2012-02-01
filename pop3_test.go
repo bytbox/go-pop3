@@ -51,9 +51,17 @@ func TestBasic (t *testing.T) {
 	var fake faker
 	fake.ReadWriter = bufio.NewReadWriter(bufio.NewReader(strings.NewReader(basicServer)), bcmdbuf)
 
-	_, err := NewClient(fake)
+	c, err := NewClient(fake)
 	if err != nil {
 		t.Fatalf("NewClient failed: %s", err)
+	}
+
+	if err = c.User("uname"); err != nil {
+		t.Fatal("User failed: %s", err)
+	}
+
+	if err = c.Pass("password"); err != nil {
+		t.Fatal("Pass failed: %s", err)
 	}
 
 	bcmdbuf.Flush()
@@ -63,6 +71,10 @@ func TestBasic (t *testing.T) {
 }
 
 var basicServer = `+OK good morning
++OK
++OK
 `
 
-var basicClient = ``
+var basicClient = `USER uname
+PASS password
+`
